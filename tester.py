@@ -1,9 +1,20 @@
+from parser import Parser
 from function import Function
 from variable import Variable
 from constant import Constant
 import math
 
 if __name__ == '__main__':
+    # print(Parser.parse('arcsin(sinx+2)'))
+    # print(Parser.parse('(arcsin(x))'))
+    # print(Parser.parse('.05x^2 + .1x - 4.5'))
+    # print(Parser.parse('pix^2'))
+    # print(Parser.parse('arcsin(sinx + 2)'))
+    # print('ß'.isalpha())
+    # print(Parser.parse('cosx + isinx'))
+    # print(Parser.parse('sin(x)'))
+    # print(Parser.parse('(x3)(x^(-8))'))
+
     # my_fun: Function = Function.generate_function('(x^2)(x+3)')
     # print(my_fun.diff(times=2))
     

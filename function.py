@@ -2,7 +2,7 @@ from __future__ import annotations
 from parser import Parser
 from variable import Variable
 from constant import Constant
-from collections import deque, Counter
+from collections import deque
 import math
 
 class Function:
