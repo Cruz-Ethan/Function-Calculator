@@ -2,6 +2,8 @@ from parser import Parser
 from function import Function
 from variable import Variable
 from constant import Constant
+from simplifier import Simplifier
+from function_generator import FunctionGenerator
 import math
 
 if __name__ == '__main__':
@@ -18,12 +20,12 @@ if __name__ == '__main__':
     # my_fun: Function = Function.generate_function('(x^2)(x+3)')
     # print(my_fun.diff(times=2))
     
-    '''
-    fun2: Function = Function.generate_function('(2x2-7x+4)(3x2+5x+7)')
+    
+    fun2: Function = FunctionGenerator.generate_function('(2x2-7x+4)(3x2+5x+7)')
     print(fun2)
-    fun2 = fun2.simplify()
+    fun2 = Simplifier.simplify(fun2)
     print(fun2)
-    '''
+    
 
     '''
     fun3: Function = Function.generate_function('x7')
@@ -31,6 +33,8 @@ if __name__ == '__main__':
     print(fun3 < fun4)
     '''
 
+    '''
     x: float = 100
     fun: Function = Function.generate_function('arctanx')
     print(fun.newton_raphson(x))
+    '''

@@ -68,23 +68,8 @@ class Constant:
     def __neg__(self) -> Constant:
         return Constant(-self.num)
     
-    def simplify(self) -> Constant:
-        return self.copy()
-
-    def simplify_helper(self) -> Constant:
-        return self.copy()
-    
-    def reorder(self) -> None:
-        pass
-
-    def is_simplified(self) -> bool:
-        return True
-
     def __eq__(self, other: Constant) -> bool:
         return isinstance(other, Constant) and self.num == other.num
     
     def __lt__(self, other: Constant) -> bool:
         return not isinstance(other, Constant) or self.num < other.num
-    
-    def __hash__(self) -> int:
-        return hash(self.num)

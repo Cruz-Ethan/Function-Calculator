@@ -61,18 +61,6 @@ class Variable:
         from function import Function
         return Function('*', [Constant('-1'), self.copy()])
     
-    def simplify(self) -> Variable:
-        return self.copy()
-    
-    def simplify_helper(self) -> Variable:
-        return self.copy()
-    
-    def reorder(self) -> None:
-        pass
-
-    def is_simplified(self) -> bool:
-        return True
-    
     def __eq__(self, other: Variable) -> bool:
         return isinstance(other, Variable) and self.var == other.var
 
@@ -80,6 +68,3 @@ class Variable:
         if isinstance(other, Constant):
             return False
         return not isinstance(other, Variable) or self.var < other.var
-    
-    def __hash__(self) -> int:
-        return hash(self.var)
