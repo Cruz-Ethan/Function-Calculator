@@ -7,6 +7,15 @@ from collections import deque
 class FunctionGenerator:
     @classmethod
     def generate_function(cls, eq: str) -> Function:
+        '''
+        Creates a Function from an equation.
+
+        Args:
+            eq (str): The equation.
+        
+        Returns:
+            Function: The Function that represents the equation.
+        '''
         operation_stack: list[str] = deque()
         value_stack: list[Function] = deque()
         eq = Parser.parse(eq)
@@ -59,6 +68,16 @@ class FunctionGenerator:
 
     @classmethod
     def __find_end_index(cls, eq: str, start_index: int) -> int:
+        '''
+        Finds the ending index of a number in an equation.
+
+        Args:
+            eq (str): The equation.
+            start_index (int): The starting index of the number.
+
+        Returns:
+            int: The ending index of the number.
+        '''
         while start_index < len(eq) and (eq[start_index] in '1234567890.pe'):
             start_index += 1
         return start_index
