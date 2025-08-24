@@ -4,14 +4,36 @@ from constant import Constant
 import math
 
 class Function:
-    def __init__(self, operation: str, functions: Function) -> None:
+    def __init__(self, operation: str, functions: list[Function]) -> None:
+        '''
+        Creates a new Function.
+
+        Args:
+            operation (str): The function's operation.
+            functions (list[Function]): The functions combined using the operation.
+        '''
         self.functions: list[Function] = functions
         self.operation: str = operation
 
     def __str__(self) -> str:
+        '''
+        Converts the Function to a readable string.
+
+        Returns:
+            str: A string representing the Function.
+        '''
         return self.str_helper(False)
 
     def str_helper(self, put_parenthesees=True) -> str:
+        '''
+        A helper function used to simplify Function strings.
+
+        Args:
+            put_parenthesees (bool): If parenthesees will be added around the entire function (for recursion purposes).
+
+        Returns:
+            str: A string representing the Function.
+        '''
         from simplifier import Simplifier
         res: str = ''
         if self.operation == '*' and Simplifier.is_simplified(self):
@@ -40,6 +62,16 @@ class Function:
         return res if put_parenthesees else res[1:-1]
 
     def diff(self, var: str = 'x', times: int = 1) -> Function:
+        '''
+        Differentiates the Function.
+
+        Args:
+            var (str): The differentiating variable.
+            times (int): The number of times to differentiate the Function.
+        
+        Returns:
+            Function: The differentiated Function.
+        '''
         from simplifier import Simplifier
         res: Function = self.copy()
 
@@ -112,6 +144,15 @@ class Function:
         return res
 
     def diff_eval(self, vars: tuple[float] | float | dict) -> float:
+        '''
+        Evaluates the derivative of the Function.
+
+        Args:
+            vars (tuple[float] | float | dict): The values of the variables.
+
+        Returns:
+            float: The derivative of the Function.
+        '''
         res: float = float('inf')
         match self.operation:
             case '+':
@@ -172,6 +213,15 @@ class Function:
         return res
     
     def eval(self, vars: tuple[float] | float | dict) -> float:
+        '''
+        Evaluates the Function.
+
+        Args:
+            vars (tuple[float] | float | dict): The values of the variables.
+
+        Returns:
+            float: The evaluation of the Function.
+        '''
         res: float = float('inf')
         match self.operation:
             case '+':
@@ -219,10 +269,25 @@ class Function:
         return res
 
     def newton_raphson(self, guess: float) -> float:
+        '''
+        Finds a zero of the function.
+
+        Args:
+            guess (float): The starting value to check.
+
+        Raises:
+            ValueError: If the guess passed to the function creates a loop.
+
+        Returns:
+            float: A zero of the function or the last value before an errror occurred.
+        '''
         vals = set()
 
         try:
-            while abs(self.eval(guess)) > 1.0e-13:
+            last_guess = guess
+            guess -= (self.eval(guess) / self.diff_eval(guess))
+            while last_guess != guess:
+                last_guess = guess
                 guess -= self.eval(guess) / self.diff_eval(guess)
                 if guess in vals: raise ValueError()
                 vals.add(guess)
@@ -234,30 +299,105 @@ class Function:
             return guess
 
     def copy(self) -> Function:
+        '''
+        Creates a copy of the Function.
+
+        Returns:
+            Function: The copy of the Function.
+        '''
         return Function(self.operation, [fun.copy() for fun in self.functions])
     
     def __add__(self, other: Function | Variable | Constant) -> Function:
+        '''
+        Adds a Function and a Constant, Variable or another Function.
+
+        Args:
+            other (Constant | Variable | Function): The value to be added.
+        
+        Returns:
+            Function: The sum of the two values.
+        '''
         return Function('+', [self.copy(), other.copy()])
     
     def __sub__(self, other: Function | Variable | Constant) -> Function:
+        '''
+        Subtracts a Function and a Constant, Variable or another Function.
+
+        Args:
+            other (Constant | Variable | Function): The value to be subtracted.
+        
+        Returns:
+            Function: The difference of the two values.
+        '''
         return Function('-', [self.copy(), other.copy()])
     
     def __mul__(self, other: Function | Variable | Constant) -> Function:
+        '''
+        Multiplies a Function and a Constant, Variable or another Function.
+
+        Args:
+            other (Constant | Variable | Function): The value to be multiplied.
+        
+        Returns:
+            Function: The product of the two values.
+        '''
         return Function('*', [self.copy(), other.copy()])
     
     def __truediv__(self, other: Function | Variable | Constant) -> Function:
+        '''
+        Divides a Function and a Constant, Variable or another Function.
+
+        Args:
+            other (Constant | Variable | Function): The value to be divided.
+        
+        Returns:
+            Function: The quotient of the two values.
+        '''
         return Function('/', [self.copy(), other.copy()])
     
     def __pow__(self, other: Function | Variable | Constant) -> Function:
+        '''
+        Raises a Function to a power of a Constant, Variable or another Function.
+
+        Args:
+            other (Constant | Variable | Function): The exponent.
+        
+        Returns:
+            Function: The power of the two values.
+        '''
         return Function('^', [self.copy(), other.copy()])
 
     def __neg__(self) -> Function:
+        '''
+        Creates a negated version of the Function.
+        
+        Returns:
+            Function: The negated Function.
+        '''
         return Constant('-1') * self
 
     def __eq__(self, other: Function) -> bool:
+        '''
+        Checks if two Functions are equal.
+
+        Args:
+            other (Function): The Function to be compared against.
+
+        Returns:
+            bool: If the two Functions are equal.
+        '''
         return isinstance(other, Function) and self.operation == other.operation and self.functions == other.functions
     
     def __lt__(self, other: Function) -> bool:
+        '''
+        Checks if one Function is less than another.
+
+        Args:
+            other (Function): The Function to be compared against.
+
+        Returns:
+            bool: If the Function is less than other.
+        '''
         if not isinstance(other, Function):
             return False
         if self == other:
@@ -285,6 +425,15 @@ class Function:
 
     @classmethod
     def __is_negative(cls, fun: Function) -> bool:
+        '''
+        Checks if a Function is 'negative'.
+
+        Args:
+            fun (Function): The Function to be checked.
+
+        Returns:
+            bool: If the Function is negative.
+        '''
         if not isinstance(fun, Function): return False
         if fun.operation != '*': return False
 

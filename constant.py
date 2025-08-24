@@ -23,7 +23,7 @@ class Constant:
         Converts the Constant to a readable string.
 
         Returns:
-            A string representing the Constant.
+            str: A string representing the Constant.
         '''
         return str(int(self.num)) if self.num.is_integer() else str(round(self.num, 3))
 
@@ -32,7 +32,7 @@ class Constant:
         A helper function used to simplify Function strings.
 
         Returns:
-            A string representing the Constant.
+            str: A string representing the Constant.
         '''
         return str(self)
     
@@ -78,7 +78,7 @@ class Constant:
         Creates a copy of the Constant.
 
         Returns:
-            The copy of the Constant.
+            Constant: The copy of the Constant.
         '''
         return Constant(self.num)
     
