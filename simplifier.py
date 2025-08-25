@@ -5,6 +5,15 @@ from function import Function
 class Simplifier:
     @classmethod
     def simplify(cls, fun: Function) -> Function:
+        '''
+        Simplifies a Function.
+
+        Args:
+            fun (Function): The Function to simplify.
+
+        Returns:
+            Function: The simplified Function.
+        '''
         res = fun.copy()
         while not cls.is_simplified(res):
             res = cls.__simplify_helper(res)
@@ -13,10 +22,28 @@ class Simplifier:
 
     @classmethod
     def is_simplified(cls, fun: Function) -> bool:
+        '''
+        Checks if a Function is simplified.
+
+        Args:
+            fun (Function): The function to be checked.
+
+        Returns:
+            bool: If the function is simplified.
+        '''
         return not isinstance(fun, Function) or fun == cls.__simplify_helper(fun)
 
     @classmethod
     def __simplify_helper(cls, fun: Function) -> Function:
+        '''
+        Does some basic simplifications on a Function.
+
+        Args:
+            fun (Function): The Function to be simplified.
+
+        Returns:
+            Function: The function with basic simplifications.
+        '''
         if not isinstance(fun, Function): return fun.copy()
         res: Function = Function(fun.operation, [cls.__simplify_helper(child_fun) for child_fun in fun.functions])
 
@@ -186,6 +213,12 @@ class Simplifier:
 
     @classmethod
     def __reorder(cls, fun: Function) -> None:
+        '''
+        Reorders a Function's subfunctions.
+
+        Args:
+            fun (Function): The Function to reorder.
+        '''
         if not isinstance(fun, Function):
             return
         
@@ -195,7 +228,17 @@ class Simplifier:
             fun.functions.sort()
 
     @classmethod
-    def __distribute(cls, fun1: Function, fun2: Function) -> Function:
+    def __distribute(cls, fun1: Constant | Variable | Function, fun2: Function) -> Function:
+        '''
+        Distributes a Constant, Variable, or Function on a sum.
+
+        Args:
+            fun1 (Constant | Variable | Function): The value to be distributed.
+            fun2 (Function): The sum Function.
+
+        Returns:
+            Function: The distributed Function.
+        '''
         if not isinstance(fun2, Function) or not fun2.operation == '+':
             return fun1 * fun2
 
@@ -212,6 +255,15 @@ class Simplifier:
 
     @classmethod
     def __multiply_functions(cls, funs: list[Function]) -> Function:
+        '''
+        Simplifies a product of sum Functions.
+
+        Args:
+            funs (list[Function]): The sum Functions to be multiplied.
+
+        Returns:
+            Function: The simplified product.
+        '''
         if not funs:
             return Constant('1')
         while len(funs) > 1:
@@ -222,6 +274,16 @@ class Simplifier:
     
     @classmethod
     def __multiply(cls, fun1: Function, fun2: Function) -> Function:
+        '''
+        Multiplies two sum Functions.
+
+        Args:
+            fun1 (Function): The first sum Function.
+            fun2 (Function): The second sum Function.
+
+        Returns:
+            Function: The simplified product.
+        '''
         res: list[Function] = []
         for term1 in fun1.functions:
             for term2 in fun2.functions:
@@ -230,16 +292,45 @@ class Simplifier:
 
     @classmethod
     def __combine_like_terms(cls, fun1: Function, fun2: Function) -> Function:
+        '''
+        Combines like terms of two Functions.
+
+        Args:
+            fun1 (Function): The first term.
+            fun2 (Function): The second term.
+
+        Returns:
+            Function: The simplified Function.
+        '''
         like_term: list[Function] = cls.__get_term(fun1)
         like_term.append(cls.__get_coefficient(fun1) + cls.__get_coefficient(fun2))
         return cls.__simplify_helper(Function('*', like_term))
 
     @classmethod
     def __are_like_terms(cls, fun1: Function, fun2: Function) -> bool:
+        '''
+        Checks if two Functions are like terms.
+
+        Args:
+            fun1 (Function): The first Function.
+            fun2 (Function): The second Function.
+
+        Returns:
+            bool: If the two Functions are like terms.
+        '''
         return cls.__get_term(fun1) == cls.__get_term(fun2)
     
     @classmethod
     def __get_coefficient(cls, term: Function) -> Constant:
+        '''
+        Finds the coefficient of a Function.
+
+        Args:
+            term (Function): The Function to be checked.
+
+        Returns:
+            Constant: The coefficient.
+        '''
         if isinstance(term, Constant):
             return term.copy()
         if isinstance(term, Function) and term.operation == '*':
@@ -250,6 +341,15 @@ class Simplifier:
     
     @classmethod
     def __get_term(cls, term: Function) -> list[Function]:
+        '''
+        Returns the base (like) term of a Function.
+
+        Args:
+            term (Function): The Function to be checked.
+
+        Returns:
+            list[Function]: All the parts of the base (like) term.
+        '''
         if isinstance(term, Constant):
             return [Constant('1')]
         if isinstance(term, Variable):
